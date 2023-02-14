@@ -3,7 +3,6 @@ http:
     host: "localhost"
     port: "8081"
     path: "/travel-on-tip/{serviceType}"
-    
 db:
   routes:
     host: "localhost"
