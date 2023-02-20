@@ -8,8 +8,8 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 	<sub-flow name="TravelOnTip-GetSchedules-ImplFlow" doc:id="5e527311-9447-48d6-9e17-a3eb09cb2bdd" >
-		<db:select doc:id="965cff81-db9e-4947-9ab5-144122a96d21" config-ref="Database_Config" doc:name="Select schedules for TravelOnTip">
-			<db:sql ><![CDATA[select * from schedules where companyname= "TravelOnTip"]]></db:sql>
+		<db:select doc:id="965cff81-db9e-4947-9ab5-144122a96d21" config-ref="${db_config}" doc:name="Select schedules for TravelOnTip">
+			<db:sql ><![CDATA[select * from schedules where COMPANYNAME= 'TravelOnTip']]></db:sql>
 		</db:select>
 		<ee:transform doc:name="Transform Message DB to JSON" doc:id="9f61a62c-fc91-4529-b9f7-45ec48d56091" >
 			<ee:message >
@@ -19,5 +19,7 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-	</sub-flow>
+		<logger level="INFO" doc:name="Logger" doc:id="26cf489a-df52-4d20-947d-5a91f18ef84d" message="#[payload]"/>
+	
+</sub-flow>
 </mule>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:dbserver="http://www.mulesoft.org/schema/mule/dbserver"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/dbserver http://www.mulesoft.org/schema/mule/dbserver/current/mule-dbserver.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<munit:config
+		name="TravelOnTip-GetRoutes-Impl-test-suite.xml" />
+	<dbserver:config name="MUnit_DB_Server_Config"
+		doc:name="MUnit DB Server Config"
+		doc:id="8cc1dd0f-e06c-4a00-8f3a-5c2b24ef5725">
+		<dbserver:connection csv="routes.csv"
+			database="dummy" />
+	</dbserver:config>
+	<db:config name="Test_Database" doc:name="Database Config" doc:id="c9c8cb21-7b1d-4d72-b2cd-dc857091159a" >
+		<db:generic-connection url="jdbc:h2:tcp://localhost/mem:dummy" driverClassName="org.h2.Driver" />
+	</db:config>
+	<flow name="setEventRoutesFlow" doc:id="2b81be85-7719-4123-9f14-6bbce021532c" >
+		<munit:set-event doc:name="Set Event for routes" doc:id="4d88a605-583f-40c7-a2fb-c084bf8fe422" >
+			<munit:attributes value='#[{"uriParams" : {"serviceType": "routes"},"headers": {"transactionId": "sgs-hzj-ueid"}}]' />
+		</munit:set-event>
+	</flow>
+	<flow name="setEventShedules" doc:id="fdc19cfe-1538-42b2-b261-097ae7775a21" >
+		<munit:set-event doc:name="Set Event" doc:id="3e539b99-3bee-408f-9a6b-cd8f4116520c" >
+			<munit:attributes value='#[{"uriParams" : {"serviceType": "schedules"},"headers": {"transactionId": "sgs-hzj-ueid"}}]' />
+		</munit:set-event>
+	</flow>
+	<munit:test name="TravelOnTip-GetRoutes-test-suiteTest" doc:id="2a6dd106-d9cf-45ff-9b27-f258ed9490cf" >
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="c716a4cc-b12b-4d6b-9b23-6448f2aa3f81" name="setEventRoutesFlow"/>
+			<flow-ref doc:name="Flow Reference" doc:id="447c46ef-3dbe-44e5-b8de-fee4a8b62310" name="travelontip-externalsystemFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="c0806572-e211-4371-8f6c-749a7006c248" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ce62f4c9-b7fc-4122-8680-2bbc6251d041" expression="#[payload]" is="#[MunitTools::withMediaType('application/json')]" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6a497ed0-96d5-44aa-91fb-fed810390d54" message="the payload is null" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TravelOnTip-GetSchedules-test-suiteTest" doc:id="75ee1ce8-5cf9-4187-8aca-ba9d27405a9c" >
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="62281add-f708-43c7-beb0-b0c50356f88a" name="setEventShedules" />
+			<flow-ref doc:name="Flow Reference1" doc:id="d9ae979c-1aa9-4737-bf28-2c3378f996e7" name="travelontip-externalsystemFlow" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="11b19b2b-8d6a-45cd-aab6-78b6255fcb87" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="98e63d16-5801-4af3-a32d-9890932b5510" expression="#[payload]" is="#[MunitTools::withMediaType('application/json')]" />
+			<munit-tools:assert-that doc:name="Assert that1" doc:id="9ae9560a-2c55-4187-b66f-64fbe06a2e47" message="the payload is null" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="travelontip-externalsystemFlowTest-default-condition" doc:id="4718be9f-3a2d-4bd1-bcf4-c140ed693920" description="Test">
+		<munit:behavior>
+			<munit:set-event doc:name="Set Event" doc:id="f6078f08-940a-442b-adc8-a687a1df1a96">
+				<munit:payload value='#[%dw 2.0&#10;var errorMessage =  "Error occurred"&#10;---&#10;{&#10;	"variable": errorMessage ++ "error on Travel on Tip external sys"&#10;}]' />
+				<munit:attributes value='#[{"uriParams" : {"serviceType": "demo"},"headers": {"transactionId": "sgs-hzj-ueid"}}]' />
+				<munit:variables>
+					<munit:variable key="statusCode" value="500" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to travelontip-externalsystemFlow" doc:id="5130dd6f-ef3a-475f-969b-143e37f10127" name="travelontip-externalsystemFlow" />
+		</munit:execution>
+	</munit:test>
+	<munit:test name="TravelOnTip-GetRoutes-ImplFlowTest-contains" doc:id="ac77bd29-85e7-46a7-8866-3ef858f82588" description="Test" >
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="cdf1bc41-5a43-487d-9386-752043313cb5" name="setEventRoutesFlow" />
+			<flow-ref doc:name="Flow-ref to TravelOnTip-GetRoutes-ImplFlow" doc:id="83ab8fe3-6907-421c-93db-c72bec538964" name="TravelOnTip-GetRoutes-ImplFlow" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="b0520b38-cc4c-4d45-b38e-a6759595a74c" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+{ 
+    "COMPANYNAME": "TravelOnTip",
+    "DESTINATIONLOCATIONCODE": "KLG-MY",
+    "ORIGINLOCATIONCODE": "BEN-SG"
+  } must beObject()]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TravelOnTip-GetSchedules-ImplFlowTest-contains" doc:id="05933e3f-ecd9-420a-8185-3a245b771545" description="Test" >
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="5662620e-4659-4d74-b613-3a73cf839e9a" name="setEventShedules" />
+			<flow-ref doc:name="Flow-ref to TravelOnTip-GetRoutes-ImplFlow" doc:id="582995f4-4c9a-4dd4-9e13-c68b085d97fd" name="TravelOnTip-GetSchedules-ImplFlow" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="397a1208-6cf5-4034-bd11-310696bda33d" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+{ 
+    "TOLOCATION": "KLG-MY",
+    "DEPARTUREDATETIME": "2021-03-22T12:12:12.090Z",
+    "FROMLOCATION": "BEN-SG",
+    "COMPANYNAME": "TravelOnTip",
+    "AVAILABLESEAT": "40"
+  } must beObject()]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+<dbserver:config name="MUnit_DB_Server_Config1" doc:name="MUnit DB Server Config" doc:id="066445ea-e588-4391-baa4-27424310bfb7" >
+		<dbserver:connection csv="schedules.csv" database="TestDB" />
+	</dbserver:config>
+	<db:config name="Test_DB" doc:name="Database Config" doc:id="0b314910-4418-469c-b816-6690c9c4f3ba" >
+		<db:generic-connection url="jdbc:h2:tcp://localhost/mem:TestDB" driverClassName="org.h2.Driver" />
+	</db:config>
+
+</mule>

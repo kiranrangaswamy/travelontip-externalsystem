@@ -13,6 +13,8 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="1272b080-0d71-4d62-9529-0716257367b0" >
 		<db:my-sql-connection host="${db.routes.host}" port="${db.routes.port}" user="${db.routes.user}" password="${db.routes.password}" database="${db.routes.database}" />
 	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="cc711a5d-78f5-470d-86ff-19a307d6f35f" file="db.properties" />
+	<configuration-properties doc:name="Configuration properties" doc:id="005376b8-1e56-4685-9bfe-d491f1aa4d34" file="db_schedule.properties" />
 	
 	
 	

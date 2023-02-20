@@ -41,7 +41,7 @@ attributes.headers.transactionId]]></ee:set-variable>
 		</choice>
 		<logger level="INFO" doc:name="Output Logger" doc:id="fed2d78c-4429-4b80-a3a5-d3f82ddec4bb" message="Response sent on Travel on Tip ext. sys. for txnId: #[vars.transactionId]"/>
 		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6eb57bf2-a615-4235-bdef-8a74d2957b76" >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6eb57bf2-a615-4235-bdef-8a74d2957b76" type="ANY">
 				<logger level="INFO" doc:name="Logger" doc:id="54fef741-4cba-43e6-b145-a0c625929104" message="error on Travel on Tip ext. sys. for txnId: #[vars.transactionId] Reason: #[error.errorMessage] ErrorType: #[error.errorType]"/>
 				<ee:transform doc:name="Transform Message" doc:id="ac086955-98ff-449d-9468-ddab391dce82" >
 					<ee:message >
